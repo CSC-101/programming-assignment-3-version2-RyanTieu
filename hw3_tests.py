@@ -2,6 +2,9 @@ import data
 import build_data
 import unittest
 
+import hw3
+from data import CountyDemographics
+from hw3 import population_total, filter_by_state
 
 # These two values are defined to support testing below. The
 # data within these structures should not be modified. Doing
@@ -177,31 +180,148 @@ reduced_data = [
 
 class TestCases(unittest.TestCase):
     pass
-
+#Ryan Tieu
     # Part 1
     # test population_total
+    def test_population_total(self):
+        self.assertEqual(hw3.population_total(full_data), 318857056)
 
     # Part 2
     # test filter_by_state
+    def test_filter_by_state(self):
+        ca_counties = hw3.filter_by_state(reduced_data, 'CA')
+        self.assertEqual(len(ca_counties), 2)
+
+    def test_filter_by_state_2(self):
+        ca_counties = hw3.filter_by_state(full_data, 'CA')
+        self.assertEqual(len(ca_counties), 58)
 
     # Part 3
     # test population_by_education
+    def test_population_by_education_1(self):
+        total = hw3.population_by_education(reduced_data, "Bachelor's Degree or Higher")
+        expected = 195114.091
+        self.assertAlmostEqual(total, expected, places = 2)
+
+    def test_population_by_education_2(self):
+        total = hw3.population_by_education(full_data, "Bachelor's Degree or Higher")
+        expected = 92216021.02
+        self.assertAlmostEqual(total, expected, places = 2)
+
+    def test_population_by_education_3(self):
+        total = hw3.population_by_education(filter_by_state(reduced_data, "CA"),  "Bachelor's Degree or Higher")
+
+        # Expected calculation for CA counties
+        expected = (0.315 * 279083) + (0.379 * 207590)
+
+        self.assertAlmostEqual(total, expected, places=2)
+
     # test population_by_ethnicity
+    def test_population_by_ethnicity(self):
+        total = hw3.population_by_ethnicity(full_data, "Two or More Races")
+        expected = 7991261.383
+        self.assertAlmostEqual(total, expected, places = 2)
+
+    def test_population_by_ethnicity_2(self):
+        total = hw3.population_by_ethnicity(filter_by_state(reduced_data, "CA"), "Two or More Races")
+        expected = 19868.322
+        self.assertAlmostEqual(total, expected, places = 2)
+
+    def test_population_by_ethnicity_3(self):
+        total = hw3.population_by_ethnicity(filter_by_state(reduced_data, "CA"), "reopgno")
+        expected = 0
+        self.assertAlmostEqual(total, expected)
+
     # test population_below_poverty_level
+    def test_population_below_poverty_level_1(self):
+        total = hw3.population_below_poverty_level(full_data, "Persons Below Poverty Level")
+        expected = 48996488.47
+        self.assertAlmostEqual(total, expected, places = 2)
+
+    def test_population_below_poverty_level_2(self):
+        total = hw3.population_below_poverty_level(reduced_data, "Persons Below Poverty Level")
+        expected = 107711.714
+        self.assertAlmostEqual(total, expected, places = 2)
+
+    def test_population_below_poverty_level_3(self):
+        total = hw3.population_below_poverty_level(filter_by_state(reduced_data, "CA"), "Persons Below Poverty Level")
+        expected = 79558.559
+        self.assertAlmostEqual(total, expected, places = 2)
 
     # Part 4
     # test percent_by_education
-    # test percent_by_ethnicity
-    # test percent_below_poverty_level
+    def test_percent_by_education_1(self):
+        result = hw3.percent_by_education(filter_by_state(reduced_data, "CA"), "Bachelor's Degree or Higher")
+        expected = 34.23
+        self.assertAlmostEqual(result, expected, places=2)
+
+    def test_percent_by_education_2(self):
+        result = hw3.percent_by_education(reduced_data, "ffjrknbwbak")
+        self.assertEqual(result, 0.0)
 
     # Part 5
     # test education_greater_than
-    # test education_less_than
-    # test ethnicity_greater_than
-    # test ethnicity_less_than
-    # test below_poverty_level_greater_than
-    # test below_poverty_level_less_than
+    def test_education_greater_than_1(self):
+        result = hw3.education_greater_than(reduced_data, "Bachelor's Degree or Higher", 60.0)
+        expected_counties = []
+        self.assertListEqual([county.county for county in result], expected_counties)
 
+    def test_education_greater_than_2(self):
+        result = hw3.education_greater_than(reduced_data, "Bachelor's Degree or Higher", 20.0)
+        expected_counties = ['Autauga County', 'San Luis Obispo County', 'Yolo County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+    # test education_less_than
+    def test_education_less_than_1(self):
+        result = hw3.education_less_than(reduced_data, "Bachelor's Degree or Higher", 20.0)
+        expected_counties = ['Crawford County', 'Butte County', 'Pettis County', 'Weston County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+
+    def test_education_less_than_2(self):
+        result = hw3.education_less_than(reduced_data, "Bachelor's Degree or Higher", 10.0)
+        expected_counties = []
+        self.assertListEqual([county.county for county in result], expected_counties)
+
+    # test ethnicity_greater_than
+    def test_ethnicity_greater_than_1(self):
+        result = hw3.ethnicity_greater_than(reduced_data, "Hispanic or Latino", 30.0)
+        expected_counties = ["Yolo County"]
+        self.assertListEqual([county.county for county in result], expected_counties)
+
+    def test_ethnicity_greater_than_2(self):
+        result = hw3.ethnicity_greater_than(reduced_data, "White Alone", 90.0)
+        expected_counties = ['Crawford County', 'Butte County', 'Pettis County', 'Weston County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+    # test ethnicity_less_than
+    def test_ethnicity_less_than_1(self):
+        result = hw3.ethnicity_less_than(reduced_data, "Asian Alone", 1.0)
+        expected_counties = ['Butte County', 'Pettis County', 'Weston County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+
+    def test_ethnicity_less_than_2(self):
+        result = hw3.ethnicity_less_than(reduced_data, "White Alone", 90.0)
+        expected_counties = ['Autauga County', 'San Luis Obispo County', 'Yolo County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+
+    # test below_poverty_level_greater_than
+    def test_below_poverty_level_greater_than_1(self):
+        result = hw3.below_poverty_level_greater_than(reduced_data, 20.0)
+        expected_counties = ['Crawford County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+
+    def test_below_poverty_level_greater_than_2(self):
+        result = hw3.below_poverty_level_greater_than(reduced_data, 15.0)
+        expected_counties = ['Crawford County', 'Yolo County', 'Butte County', 'Pettis County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+    # test below_poverty_level_less_than
+    def test_below_poverty_level_less_than_1(self):
+        result = hw3.below_poverty_level_less_than(reduced_data, 15.0)
+        expected_counties = ['Autauga County', 'San Luis Obispo County', 'Weston County']
+        self.assertListEqual([county.county for county in result], expected_counties)
+
+    def test_below_poverty_level_less_than_2(self):
+        result = hw3.below_poverty_level_less_than(full_data, 2.0)
+        expected_counties = ['Borden County']
+        self.assertListEqual([county.county for county in result], expected_counties)
 
 
 if __name__ == '__main__':

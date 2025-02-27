@@ -1,3 +1,5 @@
+#Ryan Tieu
+
 class CountyDemographics:
     # Initialize a new CountyDemographics object.
     # input: the county's age demographics data as a dictionary
