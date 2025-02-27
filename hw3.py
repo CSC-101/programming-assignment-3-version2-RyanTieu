@@ -2,7 +2,7 @@
 import data
 import county_demographics
 from data import CountyDemographics
-
+#Ryan Tieu
 #function takes in list of counties (CountyDemographics objects) and returns an integer corresponding to the sum of the 2014 population for all counties
 def population_total(counties: list[data.CountyDemographics]) -> int:
     return sum(county.population.get("2014 Population", 0) for county in counties)
